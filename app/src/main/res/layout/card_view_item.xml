@@ -1,0 +1,98 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="34dp"
+    app:cardBackgroundColor="#373737"
+    app:cardCornerRadius="7dp"
+    app:cardUseCompatPadding="true">
+
+    <LinearLayout
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Texto de la competencia -->
+        <TextView
+            android:id="@+id/competition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Test"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <!-- Layout para fecha y partido -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp">
+            <!-- Texto del partido -->
+            <TextView
+                android:id="@+id/match"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Test"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+            <!-- Texto de la fecha -->
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="Test"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <!-- Layout para los botones -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <!-- Botón -->
+            <Button
+                android:id="@+id/button"
+                android:visibility="gone"
+
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="Botón"
+                android:textSize="10sp" />
+
+            <!-- Botón -->
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="Botón"
+                android:textSize="10sp"
+                android:visibility="gone"
+                android:layout_marginStart="8dp" />
+
+            <!-- Botón -->
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="Botón"
+                android:textSize="10sp"
+                android:visibility="gone"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

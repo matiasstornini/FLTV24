@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <Button
+        android:id="@+id/showInterstitialAdsBtn"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show Interstitial Ads"/>
+
+
+    <Button
+        android:id="@+id/showSmallMediumNativeAdsBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/showInterstitialAdsBtn"
+        android:text="Show Small Medium Size Native Ads"/>
+    <Button
+        android:id="@+id/showAdsRVBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/showSmallMediumNativeAdsBtn"
+        android:text="Show Ads in Recycler View"/>
+    <Button
+        android:id="@+id/rewardedAdsBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/showAdsRVBtn"
+        android:text="Rewarded Ads"/>
+
+    <Button
+        android:id="@+id/rewardedInterstitialAdsBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rewardedAdsBtn"
+        android:text="Rewarded Interstitial Ads"/>
+
+
+    <TextView
+        android:id="@+id/totalRATxt"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/rewardedInterstitialAdsBtn"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="Rewarded Amount"/>
+
+    <FrameLayout
+        android:id="@+id/adsFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>
