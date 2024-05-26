@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="PirloTV"
+        android:text="Fútbol Libre TV"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginTop="20dp"/>

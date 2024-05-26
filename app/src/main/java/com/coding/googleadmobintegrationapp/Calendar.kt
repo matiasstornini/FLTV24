@@ -6,14 +6,14 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -25,23 +25,40 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 
-data class MatchData(val date: String, val competencia: String,val partido: String, val switch: String, val btn1: String, val btn2: String, val btn3: String,val version: String)
+data class MatchData(val date: String, val competencia: String,val partido: String, val switch: String, val btn1: String, val btn2: String, val btn3: String,val version: String,val updateURL: String)
 
 class CalendarPage : AppCompatActivity() {
+
+    private lateinit var handler: Handler
+
     @SuppressLint("WrongViewCast")
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar)
-//        requestPerm()
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE )!=
-            PackageManager.PERMISSION_GRANTED){ ActivityCompat.requestPermissions(this,
-            arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 0) }
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+            PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
+        }
 
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         window.statusBarColor = Color.TRANSPARENT
         window.navigationBarColor = Color.TRANSPARENT
 
+        val instagramIcon = findViewById<ImageView>(R.id.instagram_icon)
+        instagramIcon.setOnClickListener {
+            val url = "https://www.instagram.com/innovadesignalp/"
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+            startActivity(intent)
+        }
+
+        handler = Handler()
+        fetchData()
+    }
+
+    private fun fetchData() {
         val client = OkHttpClient()
         val uid = "1uD_UtAaYl8lh7w_8VWRCnVi-Ugat-O_2V-puezenbdw"
         val sheet = "AdminOLD"
@@ -64,7 +81,7 @@ class CalendarPage : AppCompatActivity() {
 
                         val dataList = mutableListOf<MatchData>() // Lista para almacenar objetos MatchData
 
-// Itera sobre el array de partidos y competencias
+                        // Itera sobre el array de partidos y competencias
                         for (i in 0 until rowsArray.length()) {
                             val row = rowsArray.getJSONObject(i)
                             val cells = row.getJSONArray("c")
@@ -83,34 +100,37 @@ class CalendarPage : AppCompatActivity() {
                             } else {
                                 ""
                             }
-
+                            val updateURL = if (rowsArray.length() > 0) {
+                                rowsArray.getJSONObject(0).getJSONArray("c").optJSONObject(13)?.optString("v", "") ?: ""
+                            } else {
+                                ""
+                            }
                             Log.d("switch", switch)
 
-                            dataList.add(MatchData(horaMinutos,competencia, partido, switch,btn1,btn2,btn3,version)) // Agregar los datos a la lista
+                            dataList.add(MatchData(horaMinutos, competencia, partido, switch, btn1, btn2, btn3, version, updateURL)) // Agregar los datos a la lista
                         }
-
 
                         // Actualizar las vistas en el hilo principal
                         runOnUiThread {
-                            // Llama a la función para configurar los datos en la CardView
                             setupCardView(dataList)
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }
+                // Programar la próxima actualización después de 5 segundos
+                handler.postDelayed({ fetchData() }, 5000)
             }
 
             fun convertirTimestampAHoraMinutos(timestamp: Long): String {
                 // Crear una instancia de Date usando el timestamp
                 val date = Date(timestamp * 1000) // El timestamp está en segundos, por lo que lo multiplicamos por 1000 para convertirlo a milisegundos
 
-                // Crear un objeto SimpleDateFormat para formatear la fecha
                 val format = SimpleDateFormat("HH:mm") // HH:mm para formato de hora:minutos
 
-                // Formatear la fecha y devolverla como una cadena
                 return format.format(date)
             }
+
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
                 runOnUiThread {
@@ -123,17 +143,19 @@ class CalendarPage : AppCompatActivity() {
                     val alertDialog = alertDialogBuilder.create()
                     alertDialog.show()
                 }
+                // Reintentar después de 5 segundos en caso de falla
+                handler.postDelayed({ fetchData() }, 5000)
             }
         })
     }
 
-    // Función para configurar los datos en la CardView
     private fun setupCardView(dataList: MutableList<MatchData>) {
         // Obtén el layout que contiene las CardViews
         val linearLayout = findViewById<LinearLayout>(R.id.cardView)
+        linearLayout.removeAllViews() // Limpiar las vistas anteriores
 
         // Itera sobre los datos obtenidos y crea una CardView para cada uno
-        for ((partido, competencia, horaMinutos, switch,btn1,btn2,btn3,version) in dataList) {
+        for ((partido, competencia, horaMinutos, switch, btn1, btn2, btn3, version, updateURL) in dataList) {
             if (version == "v1") {
 
                 // Crea una nueva instancia de CardView
@@ -150,10 +172,8 @@ class CalendarPage : AppCompatActivity() {
                 val button3 = cardView.findViewById<Button>(R.id.button3)
 
                 // Configura los datos en los elementos de la CardView
-                competitionTextView.text =
-                    competencia // Configura la competencia en el TextView correspondiente
-                dateTextView.text =
-                    horaMinutos // Configura la hora y minutos en el TextView correspondiente
+                competitionTextView.text = competencia // Configura la competencia en el TextView correspondiente
+                dateTextView.text = horaMinutos // Configura la hora y minutos en el TextView correspondiente
                 matchTextView.text = partido // Configura el partido en el TextView correspondiente
 
                 // Si el switch es igual a 1, muestra el botón
@@ -185,7 +205,6 @@ class CalendarPage : AppCompatActivity() {
                                 applicationContext.startActivity(intent)
                             } catch (e: ActivityNotFoundException) {
                                 // Si la actividad no puede ser encontrada o la aplicación no está instalada, muestra un mensaje
-
                             }
                         }
                     }
@@ -200,7 +219,6 @@ class CalendarPage : AppCompatActivity() {
                                 applicationContext.startActivity(intent)
                             } catch (e: ActivityNotFoundException) {
                                 // Si la actividad no puede ser encontrada o la aplicación no está instalada, muestra un mensaje
-
                             }
                         }
                     }
@@ -210,12 +228,15 @@ class CalendarPage : AppCompatActivity() {
 
                 // Agrega la CardView al layout principal
                 linearLayout.addView(cardView)
-            }else{
+            } else {
                 val alertDialogBuilder = AlertDialog.Builder(this@CalendarPage)
                 alertDialogBuilder.setTitle("Error")
-                alertDialogBuilder.setMessage("Actualiazr app.")
+                alertDialogBuilder.setMessage("Actualizar app.")
                 alertDialogBuilder.setPositiveButton("Aceptar") { dialog, _ ->
                     dialog.dismiss()
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse(updateURL)
+                    startActivity(intent)
                 }
                 val alertDialog = alertDialogBuilder.create()
                 alertDialog.show()
@@ -223,4 +244,9 @@ class CalendarPage : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
+    }
 }
+
